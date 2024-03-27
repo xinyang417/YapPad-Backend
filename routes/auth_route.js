@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userService = require("../services/user_service");
+const loggedInMiddleware = require('../middleware/logged_in_check')
 
 // registration endpoint
 router.post("/register", async (req, res) => {
@@ -31,14 +32,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/logout", async (req, res) => {
-  if (req.session.user_id) {
-    req.session.destroy(() => {
-      return res.json({ message: "Logged out succesfully" })
-    })
-  } else {
-    return res.json({ message: "No one is currently logged in" })
-  }
+router.post("/logout", loggedInMiddleware, async (req, res) => {
+  req.session.destroy(() => {
+    return res.json({ message: "Logged out succesfully" })
+  })
 })
 
 // fetch user data endpoint
