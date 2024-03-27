@@ -1,6 +1,6 @@
 const express = require("express");
 const auth_router = require("./routes/auth");
-const DbService = require("./services/db_service")
+const DbService = require("./services/db_service");
 
 const app = express();
 const PORT = 8000;
@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
 });
 
 async function main() {
-  const db = new DbService()
+  const db = new DbService();
   db.connect()
     .catch((e) => {
       console.error("An error occured while connecting to mongodb");

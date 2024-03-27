@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 class DbService {
   constructor() {
@@ -10,8 +11,7 @@ class DbService {
   }
 
   async connect() {
-    const MONGO_URL =
-      process.env.MONGO_URL || "mongodb://127.0.0.1:27017/YapPad";
+    const MONGO_URL = process.env.MONGO_URL;
 
     try {
       // Connect the client to the server
