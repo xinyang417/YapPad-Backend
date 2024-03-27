@@ -30,7 +30,7 @@ router.post("/login", async (req, res) => {
 router.get("/:email", async (req, res) => {
   try {
     const { email } = req.params;
-    const user = await userService.getUserByEmail(email);
+    const user = await userService.getUser(email);
     res.json(user);
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -43,7 +43,7 @@ router.put("/update/:email", async (req, res) => {
   try {
     const { email } = req.params;
     const updateData = req.body;
-    const updatedUser = await userService.updateUserByEmail(email, updateData);
+    const updatedUser = await userService.updateUser(email, updateData);
     res.json(updatedUser);
   } catch (error) {
     console.error("Error updating user data:", error);

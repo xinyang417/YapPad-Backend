@@ -49,7 +49,7 @@ async function loginUser(email, password) {
 }
 
 // Fetch user data by email, excluding the password cuz security
-async function getUserByEmail(email) {
+async function getUser(email) {
   try {
     const user = await User.findOne({ email }, { password: 0 });
     if (!user) {
@@ -61,8 +61,8 @@ async function getUserByEmail(email) {
   }
 }
 
-// Update user data
-async function updateUserByEmail(email, updateData) {
+// Update user data by email
+async function updateUser(email, updateData) {
   try {
     const updatedUser = await User.findOneAndUpdate({ email }, updateData, {
       new: true,
@@ -80,6 +80,6 @@ async function updateUserByEmail(email, updateData) {
 module.exports = {
   createUser,
   loginUser,
-  getUserByEmail,
-  updateUserByEmail,
+  getUser,
+  updateUser,
 };
