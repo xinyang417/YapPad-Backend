@@ -11,7 +11,7 @@ async function createUser(username, email, password) {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await hashPassword(password);
 
     // Create a new user
     const user = new User({
@@ -64,6 +64,11 @@ async function getUser(email) {
 // Update user data by email
 async function updateUser(email, updateData) {
   try {
+    // Hash password if it is included in the update data
+    if (updateData.password) {
+      updateData.password = await hashPassword(updateData.password);
+    }
+
     const updatedUser = await User.findOneAndUpdate({ email }, updateData, {
       new: true,
       runValidators: true,
@@ -72,6 +77,19 @@ async function updateUser(email, updateData) {
       throw new Error("User not found");
     }
     return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Hash password with salt
+async function hashPassword(password) {
+  try {
+    const saltRounds = 12;
+    const salt = await bcrypt.genSalt(saltRounds);
+
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
   } catch (error) {
     throw error;
   }
