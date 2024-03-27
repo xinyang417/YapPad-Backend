@@ -1,11 +1,18 @@
 const express = require("express");
 const auth_router = require("./routes/auth_route");
 const DbService = require("./services/db_service");
+const session = require('express-session')
 
 const app = express();
 const PORT = 8000;
 
 app.use(express.json());
+app.use(session({
+  secret: 'keyboardcat',
+  resave: 'false',
+  saveUninitialized: false,
+  // cookie: { secure: true }
+}))
 app.use("/auth", auth_router);
 
 app.get("/", (req, res) => {

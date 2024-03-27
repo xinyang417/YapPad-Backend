@@ -18,13 +18,28 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    await userService.loginUser(email, password);
-    res.json({ message: "Login successful" });
+
+    const user = await userService.loginUser(email, password);
+    req.session.user_id = user._id
+    return req.session.save(() => {
+      return res.json({ message: "Login successful" });
+    })
+
   } catch (error) {
     console.error("Error logging in user:", error);
     res.status(500).json({ message: "Error logging in user" });
   }
 });
+
+router.post("/logout", async (req, res) => {
+  if (req.session.user_id) {
+    req.session.destroy(() => {
+      return res.json({ message: "Logged out succesfully" })
+    })
+  } else {
+    return res.json({ message: "No one is currently logged in" })
+  }
+})
 
 // fetch user data endpoint
 router.get("/:email", async (req, res) => {
