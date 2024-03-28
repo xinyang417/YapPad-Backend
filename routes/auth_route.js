@@ -16,13 +16,13 @@ router.post("/register", async (req, res) => {
 
 // login endpoint
 router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-    await userService.loginUser(email, password);
-    res.json({ message: "Login successful" });
+    const { user, token } = await userService.loginUser(email, password);
+    res.status(200).json({ user, token });
   } catch (error) {
-    console.error("Error logging in user:", error);
-    res.status(500).json({ message: "Error logging in user" });
+    res.status(401).json({ message: error.message });
   }
 });
 
