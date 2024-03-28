@@ -3,10 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user_model.js");
 
-// const crypto = require('crypto');
-// const secret = crypto.randomBytes(64).toString('hex');
-// console.log(secret);
-
 // Create a user
 async function createUser(username, email, password) {
   try {
