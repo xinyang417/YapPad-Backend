@@ -17,18 +17,25 @@ router.post("/register", async (req, res) => {
 
 // login endpoint
 router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
   try {
     const { email, password } = req.body;
 
-    const user = await userService.loginUser(email, password);
-    req.session.user_id = user._id
-    return req.session.save(() => {
-      return res.json({ message: "Login successful" });
-    })
-
+    try {
+        const { user, token } = await userService.loginUser(email, password);
+        // Assuming you have access to 'req.session'
+        req.session.user_id = user._id;
+        req.session.save(() => {
+            res.status(200).json({ user, token, message: "Login successful" });
+        });
+    } catch (error) {
+        // Handle login errors
+        res.status(401).json({ message: "Invalid email or password" });
+    }
+    
   } catch (error) {
-    console.error("Error logging in user:", error);
-    res.status(500).json({ message: "Error logging in user" });
+    res.status(401).json({ message: error.message });
   }
 });
 
