@@ -10,8 +10,14 @@ const app = express();
 const PORT = 8000;
 
 // Enable CORS for all routes
+// Additional CORS configuration if needed
 const cors = require("cors");
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow requests from this origin only
+    credentials: true
+  })
+);
 
 // Parse JSON requests
 app.use(express.json());
@@ -37,9 +43,6 @@ app.use(cors(corsOptions));
 app.use("/auth", auth_router);
 app.use("/yaps", yap_router);
 app.use("/admin", admin_router);
-
-// Handle preflight requests
-app.options('*', cors(corsOptions));
 
 app.get("/", (req, res) => {
   return res.send("Hello World!");
