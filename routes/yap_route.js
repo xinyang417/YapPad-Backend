@@ -44,7 +44,7 @@ router.put("/update/:id", logged_in_check_middleware, async (req, res) => {
     const yap = await yapService.updateYap(id, title, content);
     res.json(yap);
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -52,10 +52,10 @@ router.put("/update/:id", logged_in_check_middleware, async (req, res) => {
 router.delete("/delete/:id", logged_in_check_middleware, async (req, res) => {
   try {
     const { id } = req.params;
-    const yap = await yapService.deleteYap(id);
-    res.json(yap);
+    await yapService.deleteYap(id);
+    res.json({ message: "Yap deleted" });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 

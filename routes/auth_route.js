@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userService = require("../services/user_service");
-const loggedInMiddleware = require('../middleware/logged_in_check')
+const loggedInMiddleware = require("../middleware/logged_in_check");
 
 // registration endpoint
 router.post("/register", async (req, res) => {
@@ -17,23 +17,20 @@ router.post("/register", async (req, res) => {
 
 // login endpoint
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
   try {
     const { email, password } = req.body;
 
     try {
-        const { user, token } = await userService.loginUser(email, password);
-        // Assuming you have access to 'req.session'
-        req.session.user_id = user._id;
-        req.session.save(() => {
-            res.status(200).json({ user, token, message: "Login successful" });
-        });
+      const { user, token } = await userService.loginUser(email, password);
+      // Assuming you have access to 'req.session'
+      req.session.user_id = user._id;
+      req.session.save(() => {
+        res.status(200).json({ user, token, message: "Login successful" });
+      });
     } catch (error) {
-        // Handle login errors
-        res.status(401).json({ message: "Invalid email or password" });
+      // Handle login errors
+      res.status(401).json({ message: "Invalid email or password" });
     }
-    
   } catch (error) {
     res.status(401).json({ message: error.message });
   }
@@ -41,9 +38,9 @@ router.post("/login", async (req, res) => {
 
 router.post("/logout", loggedInMiddleware, async (req, res) => {
   req.session.destroy(() => {
-    return res.json({ message: "Logged out succesfully" })
-  })
-})
+    return res.json({ message: "Logged out successfully" });
+  });
+});
 
 // fetch user data endpoint
 router.get("/:email", async (req, res) => {
