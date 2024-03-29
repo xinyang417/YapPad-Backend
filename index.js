@@ -10,7 +10,13 @@ const app = express();
 const PORT = 8000;
 
 // Enable CORS for all routes
-app.use(cors());
+// Additional CORS configuration if needed
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Allow requests from this origin only
+    credentials: true
+  })
+);
 
 // Parse JSON requests
 app.use(express.json());
@@ -27,13 +33,6 @@ app.use(
 app.use("/auth", auth_router);
 app.use("/yaps", yap_router);
 app.use("/admin", admin_router);
-
-// Additional CORS configuration if needed
-app.use(
-  cors({
-    origin: "http://localhost:5173/", // Allow requests from this origin only
-  })
-);
 
 app.get("/", (req, res) => {
   return res.send("Hello World!");
