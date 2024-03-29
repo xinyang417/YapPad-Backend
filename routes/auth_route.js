@@ -22,6 +22,7 @@ router.post("/login", async (req, res) => {
 
     try {
       const { user, token } = await userService.loginUser(email, password);
+      user.password = undefined
       // Assuming you have access to 'req.session'
       req.session.user_id = user._id;
       req.session.save(() => {
