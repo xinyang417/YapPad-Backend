@@ -1,7 +1,8 @@
 const express = require("express");
 const auth_router = require("./routes/auth_route.js");
+const yap_router = require("./routes/yap_route.js");
 const DbService = require("./services/db_service.js");
-const session = require('express-session')
+const session = require("express-session");
 
 const app = express();
 const PORT = 8000;
@@ -14,18 +15,23 @@ app.use(cors());
 app.use(express.json());
 
 // Define routes
-app.use(session({
-  secret: 'keyboardcat',
-  resave: 'false',
-  saveUninitialized: false,
-  // cookie: { secure: true }
-}))
+app.use(
+  session({
+    secret: "keyboardcat",
+    resave: "false",
+    saveUninitialized: false,
+    // cookie: { secure: true }
+  })
+);
 app.use("/auth", auth_router);
+app.use("/yaps", yap_router);
 
 // Additional CORS configuration if needed
-app.use(cors({
-  origin: 'http://localhost:5173/' // Allow requests from this origin only
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173/", // Allow requests from this origin only
+  })
+);
 
 app.get("/", (req, res) => {
   return res.send("Hello World!");
