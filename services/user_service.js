@@ -1,4 +1,4 @@
-require('dotenv').config(); // Using this for the jwtSecret
+require("dotenv").config(); // Using this for the jwtSecret
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user_model.js");
@@ -30,24 +30,28 @@ async function createUser(username, email, password) {
 }
 
 async function loginUser(email, password) {
-  const user = await User.findOne({ email });
+  try {
+    const user = await User.findOne({ email });
 
-  if (!user) {
-    throw new Error("Invalid email or password");
+    if (!user) {
+      throw new Error("Invalid email or password");
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      throw new Error("Invalid email or password");
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    return { user, token };
+  } catch (error) {
+    throw error; // Just throw the error without modifying it
   }
-
-  const passwordMatch = await bcrypt.compare(password, user.password);
-
-  if (!passwordMatch) {
-    throw new Error("Invalid email or password");
-  }
-
-  // Generate JWT token
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
-
-  return { user, token };
 }
 
 // Fetch user data by email, excluding the password cuz security
