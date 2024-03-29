@@ -1,7 +1,8 @@
 const express = require("express");
 const auth_router = require("./routes/auth_route.js");
+const yap_router = require("./routes/yap_route.js");
 const DbService = require("./services/db_service.js");
-const session = require('express-session')
+const session = require("express-session");
 
 const app = express();
 const PORT = 8000;
@@ -31,6 +32,7 @@ app.use(cors(corsOptions));
 
 // Define your routes
 app.use("/auth", auth_router);
+app.use("/yaps", yap_router);
 
 // Handle preflight requests
 app.options('*', cors(corsOptions));
