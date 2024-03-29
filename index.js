@@ -1,6 +1,7 @@
 const express = require("express");
 const auth_router = require("./routes/auth_route.js");
 const yap_router = require("./routes/yap_route.js");
+const admin_router = require("./routes/admin_route.js");
 const DbService = require("./services/db_service.js");
 const session = require("express-session");
 
@@ -25,6 +26,7 @@ app.use(
 );
 app.use("/auth", auth_router);
 app.use("/yaps", yap_router);
+app.use("/admin", admin_router);
 
 // Additional CORS configuration if needed
 app.use(
