@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const auth_router = require("./routes/auth_route.js");
 const yap_router = require("./routes/yap_route.js");
 const admin_router = require("./routes/admin_route.js");
@@ -10,6 +11,7 @@ const PORT = 8000;
 
 // Enable CORS for all routes
 const cors = require("cors");
+app.use(cors());
 
 // Parse JSON requests
 app.use(express.json());
