@@ -9,7 +9,7 @@ router.get("/users", admin_check_middleware, async (req, res) => {
   const all_users = await User.find()
   const ret_users = await Promise.all(all_users.map(async (u) => {
     const consumption = await getApiConsumption(u.id)
-    return { _id: u.id, username: u.username, email: u.email, isAdmin: u.isAdmin, consumption: consumption}
+    return { _id: u.id, username: u.username, email: u.email, isAdmin: u.isAdmin, consumption: consumption }
   }))
 
   res.json(ret_users);
