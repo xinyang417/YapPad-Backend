@@ -74,16 +74,27 @@ async function updateUser(email, updateData) {
     if (updateData.password) {
       updateData.password = await hashPassword(updateData.password);
     }
+    console.log('Updating user email...');
+    console.log('Email:', email);
+    console.log('Update data:', updateData);
 
     const updatedUser = await User.findOneAndUpdate({ email }, updateData, {
       new: true,
       runValidators: true,
     });
+
+    console.log('Updated user:', updatedUser);
+
     if (!updatedUser) {
+      console.error('User not found');
       throw new Error("User not found");
     }
+
+    console.log('User email updated successfully');
+
     return updatedUser;
   } catch (error) {
+    console.error('Error updating user email:', error);
     throw error;
   }
 }
