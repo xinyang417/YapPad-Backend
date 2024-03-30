@@ -59,7 +59,7 @@ async function getUser(email) {
   try {
     const user = await User.findOne({ email }, { password: 0 });
     if (!user) {
-      throw new Error("User not found");
+      throw new Error(`User not found for email: ${email}`);
     }
     return user;
   } catch (error) {
