@@ -2,12 +2,15 @@ const express = require("express");
 const router = express.Router();
 const userService = require("../services/user_service");
 const loggedInMiddleware = require("../middleware/logged_in_check");
+const apiConsumptionService = require("../services/api_consumption_service");
 
 // registration endpoint
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    await userService.createUser(username, email, password);
+    const user = await userService.createUser(username, email, password);
+    await apiConsumptionService.initApiConsumption(user.id)
+
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.error("Error registering new user:", error);
