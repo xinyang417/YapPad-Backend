@@ -8,7 +8,6 @@ const PORT = 8000;
 
 // Enable CORS for all routes
 const cors = require("cors");
-app.use(cors());
 
 // Parse JSON requests
 app.use(express.json());
@@ -19,13 +18,22 @@ app.use(session({
   resave: 'false',
   saveUninitialized: false,
   // cookie: { secure: true }
-}))
+}));
+
+// CORS configuration
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow requests from this origin
+  credentials: true // Allow credentials
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
+
+// Define your routes
 app.use("/auth", auth_router);
 
-// Additional CORS configuration if needed
-app.use(cors({
-  origin: 'http://localhost:5173/' // Allow requests from this origin only
-}));
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 app.get("/", (req, res) => {
   return res.send("Hello World!");
@@ -33,17 +41,16 @@ app.get("/", (req, res) => {
 
 async function main() {
   const db = new DbService();
-  db.connect()
-    .catch((e) => {
-      console.error("An error occurred while connecting to MongoDB");
-      console.error(e);
-      process.exit(1);
-    })
-    .then(() => {
-      app.listen(PORT, () => {
-        console.log(`Started listening on port ${PORT}`);
-      });
+  try {
+    await db.connect();
+    app.listen(PORT, () => {
+      console.log(`Started listening on port ${PORT}`);
     });
+  } catch (error) {
+    console.error("An error occurred while connecting to MongoDB");
+    console.error(error);
+    process.exit(1);
+  }
 }
 
 main();
