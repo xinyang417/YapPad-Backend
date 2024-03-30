@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const userService = require("../services/user_service");
+const pswResetService = require("../services/psw_reset_service");
 const loggedInMiddleware = require("../middleware/logged_in_check");
 const apiConsumptionService = require("../services/api_consumption_service");
 
@@ -25,7 +26,7 @@ router.post("/login", async (req, res) => {
 
     try {
       const { user, token } = await userService.loginUser(email, password);
-      user.password = undefined
+      user.password = undefined;
       // Assuming you have access to 'req.session'
       req.session.user_id = user._id;
       req.session.save(() => {
@@ -44,6 +45,36 @@ router.post("/logout", loggedInMiddleware, async (req, res) => {
   req.session.destroy(() => {
     return res.json({ message: "Logged out successfully" });
   });
+});
+
+// password reset endpoint
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const result = await pswResetService.handlePasswordResetRequest(email);
+    if (result === "User not found") {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: result });
+  } catch (error) {
+    console.error("Error handling password reset request:", error);
+    res.status(500).json({ message: "Error handling password reset request" });
+  }
+});
+
+// Handle password reset link
+router.get("/reset-password", async (req, res) => {
+  try {
+    const { email, token } = req.query;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+    res.json({ email, token });
+  } catch (error) {
+    res.status(500).json({ message: "Error handling password reset link" });
+  }
 });
 
 // fetch user data endpoint
