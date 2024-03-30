@@ -4,6 +4,7 @@ const userService = require("../services/user_service");
 const pswResetService = require("../services/psw_reset_service");
 const loggedInMiddleware = require("../middleware/logged_in_check");
 const apiConsumptionService = require("../services/api_consumption_service");
+const User = require('../models/user_model'); // Import User model
 
 // registration endpoint
 router.post("/register", async (req, res) => {
@@ -27,8 +28,9 @@ router.post("/login", async (req, res) => {
     try {
       const { user, token } = await userService.loginUser(email, password);
       user.password = undefined;
-      // Assuming you have access to 'req.session'
+      // Set both user ID and email in the session
       req.session.user_id = user._id;
+      req.session.userEmail = user.email; // Store user's email in the session
       req.session.save(() => {
         res.status(200).json({ user, token, message: "Login successful" });
       });
@@ -93,12 +95,62 @@ router.get("/:email", async (req, res) => {
 router.put("/update/:email", async (req, res) => {
   try {
     const { email } = req.params;
-    const updateData = req.body;
-    const updatedUser = await userService.updateUser(email, updateData);
+    const { newEmail } = req.body; // Update to extract 'newEmail' from request body
+    const updatedUser = await userService.updateUser(email, { email: newEmail }); // Pass 'newEmail' to updateUser function
     res.json(updatedUser);
   } catch (error) {
     console.error("Error updating user data:", error);
     res.status(500).json({ message: "Error updating user data" });
+  }
+});
+
+// Route to update user's email
+router.put('/api/update-email', loggedInMiddleware, async (req, res) => {
+  const { newEmail } = req.body;
+  const userId = req.session.user_id; // Assuming user ID is stored in the session
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user's email
+    user.email = newEmail;
+    await user.save();
+
+    res.status(200).json({ message: 'Email updated successfully', user: user });
+  } catch (error) {
+    console.error('Error updating email:', error);
+    res.status(500).json({ message: 'Failed to update email. Please try again later.' });
+  }
+});
+
+// Add a new route to check authentication status
+router.get("/check-auth", loggedInMiddleware, async (req, res) => {
+  try {
+    // If the request reaches here, it means the user is authenticated
+    res.json({ authenticated: true });
+  } catch (error) {
+    console.error("Error checking authentication status:", error);
+    res.status(500).json({ message: "Error checking authentication status" });
+  }
+});
+
+// Express route to fetch current user's email
+router.get("/current-user-email", loggedInMiddleware, async (req, res) => {
+  try {
+    // Assuming the user's email is stored in the session
+    const userEmail = req.session.userEmail;
+    if (!userEmail) {
+      throw new Error("User email not found");
+    }
+    // Send the user's email as JSON response
+    res.json({ email: userEmail });
+  } catch (error) {
+    console.error("Error fetching current user email:", error);
+    res.status(500).json({ message: "Error fetching current user email" });
   }
 });
 
