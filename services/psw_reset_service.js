@@ -12,8 +12,9 @@ async function handlePasswordResetRequest(email) {
 
     await sendEmail(
       email,
-      "Reset Your Password",
-      `To reset your password, click the following link: http://localhost:8000/auth/reset-password?email=${email}&token=${resetToken}`
+      "Reset Your YapPad Password",
+      `Forgot your password? Click the following link to reset your password: 
+      http://localhost:8000/auth/reset-password?email=${email}&token=${resetToken}`
     );
 
     return "Password reset email sent successfully";
