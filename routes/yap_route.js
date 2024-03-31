@@ -35,15 +35,22 @@ router.post("/create", [logged_in_check_middleware, api_consumption_middleware],
   }
 });
 
-// Get all yaps
+// Get all yaps for the logged-in user
 router.get("/saved", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
+  const authorId = req.session.user_id;
+  if (!authorId) {
+    return res.status(403).json({ message: "Unauthorized access. No user logged in." });
+  }
+  
   try {
-    const yaps = await yapService.getYaps();
+    const yaps = await yapService.getYaps(authorId);
     res.json(yaps);
   } catch (error) {
+    console.error('Error fetching user-specific yaps:', error);
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Get a yap by ObjectId
 router.get("/:id", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
