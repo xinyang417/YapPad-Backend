@@ -14,14 +14,18 @@ async function createYap(title, content, authorId) {
   }
 }
 
-async function getYaps() {
+async function getYaps(authorId) {
   try {
-    const yaps = await Yap.find();
+    if (!authorId) {
+      throw new Error("Author ID is required");
+    }
+    const yaps = await Yap.find({ author: authorId });
     return yaps;
   } catch (error) {
     throw error;
   }
 }
+
 
 async function getYap(id) {
   try {

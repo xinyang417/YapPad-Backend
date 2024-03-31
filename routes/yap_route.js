@@ -3,6 +3,25 @@ const router = express.Router();
 const yapService = require("../services/yap_service");
 const logged_in_check_middleware = require("../middleware/logged_in_check");
 const api_consumption_middleware = require("../middleware/api_consumption_middleware");
+const { getApiConsumption } = require("../services/api_consumption_service"); 
+
+// fetch the current API consumption
+router.get('/api-consumption', [logged_in_check_middleware], async (req, res) => {
+  console.log("Accessing /api-consumption endpoint");
+  try {
+    const userId = req.session.user_id;
+    console.log("UserID from session:", userId); 
+    if (!userId) {
+      return res.status(400).json({ message: "User ID not found in session." });
+    }
+    const calls = await getApiConsumption(userId);
+    res.json({ calls });
+  } catch (error) {
+    console.error('Failed to fetch API consumption:', error);
+    res.status(500).json({ message: 'Internal server error occurred.' });
+  }
+});
+
 
 // Create a new Yap
 router.post("/create", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
@@ -16,15 +35,22 @@ router.post("/create", [logged_in_check_middleware, api_consumption_middleware],
   }
 });
 
-// Get all yaps
+// Get all yaps for the logged-in user
 router.get("/saved", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
+  const authorId = req.session.user_id;
+  if (!authorId) {
+    return res.status(403).json({ message: "Unauthorized access. No user logged in." });
+  }
+  
   try {
-    const yaps = await yapService.getYaps();
+    const yaps = await yapService.getYaps(authorId);
     res.json(yaps);
   } catch (error) {
+    console.error('Error fetching user-specific yaps:', error);
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Get a yap by ObjectId
 router.get("/:id", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
@@ -59,5 +85,8 @@ router.delete("/delete/:id", [logged_in_check_middleware, api_consumption_middle
     res.status(500).json({ message: error.message });
   }
 });
+
+
+
 
 module.exports = router;

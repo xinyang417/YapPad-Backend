@@ -8,14 +8,19 @@ const apiConsumptionService = require("../services/api_consumption_service");
 // registration endpoint
 router.post("/register", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    const user = await userService.createUser(username, email, password);
-    await apiConsumptionService.initApiConsumption(user.id)
+    const { username, email, password, isAdmin } = req.body;
+    const user = await userService.createUser(username, email, password, isAdmin);
+    await apiConsumptionService.initApiConsumption(user.id);
 
-    res.status(201).json({ message: "User created successfully" });
+    // user is logged in asap as soon as they register
+    const { token } = await userService.loginUser(email, password);
+    req.session.user_id = user._id; 
+    req.session.save(() => {
+      res.status(201).json({ message: "User created and logged in successfully", token });
+    });
   } catch (error) {
-    console.error("Error registering new user:", error);
-    res.status(500).json({ message: "Error registering new user" });
+    console.error("Error during user registration/login:", error);
+    res.status(500).json({ message: "Error during user registration/login" });
   }
 });
 
@@ -27,13 +32,12 @@ router.post("/login", async (req, res) => {
     try {
       const { user, token } = await userService.loginUser(email, password);
       user.password = undefined;
-      // Assuming you have access to 'req.session'
+      // since we have access to req.session
       req.session.user_id = user._id;
       req.session.save(() => {
         res.status(200).json({ user, token, message: "Login successful" });
       });
     } catch (error) {
-      // Handle login errors
       res.status(401).json({ message: "Invalid email or password" });
     }
   } catch (error) {

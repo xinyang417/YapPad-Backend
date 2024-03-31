@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user_model.js");
 
 // Create a user
-async function createUser(username, email, password) {
+async function createUser(username, email, password, isAdmin) {
   try {
     // Check if user exists
     const userExists = await User.findOne({ $or: [{ email }, { username }] });
@@ -20,6 +20,7 @@ async function createUser(username, email, password) {
       username,
       email,
       password: hashedPassword,
+      isAdmin,
     });
 
     await user.save();
