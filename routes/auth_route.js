@@ -14,7 +14,7 @@ router.post("/register", async (req, res) => {
 
     // user is logged in asap as soon as they register
     const { token } = await userService.loginUser(email, password);
-    req.session.user_id = user._id; 
+    req.session.user_id = user._id;
     req.session.save(() => {
       res.status(201).json({ message: "User created and logged in successfully", token });
     });
@@ -68,15 +68,19 @@ router.post("/forgot-password", async (req, res) => {
 });
 
 // Handle password reset link
-router.get("/reset-password", async (req, res) => {
+router.post("/reset-password", async (req, res) => {
   try {
-    const { email, token } = req.query;
+    const { email, token, password } = req.body;
+    console.log(email, token, password)
 
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
-    res.json({ email, token });
+
+    await pswResetService.resetPassword(email, token, password)
+    res.json({ message: "Password reset successfully!" });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: "Error handling password reset link" });
   }
 });
