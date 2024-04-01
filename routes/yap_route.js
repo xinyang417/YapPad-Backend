@@ -36,7 +36,7 @@ router.post("/create", [logged_in_check_middleware, api_consumption_middleware],
 });
 
 // Get all yaps for the logged-in user
-router.get("/saved", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
+router.get("/saved", [logged_in_check_middleware], async (req, res) => {
   const authorId = req.session.user_id;
   if (!authorId) {
     return res.status(403).json({ message: "Unauthorized access. No user logged in." });
@@ -53,7 +53,7 @@ router.get("/saved", [logged_in_check_middleware, api_consumption_middleware], a
 
 
 // Get a yap by ObjectId
-router.get("/:id", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
+router.get("/:id", [logged_in_check_middleware], async (req, res) => {
   try {
     const { id } = req.params;
     const yap = await yapService.getYap(id);
@@ -64,7 +64,7 @@ router.get("/:id", [logged_in_check_middleware, api_consumption_middleware], asy
 });
 
 // Update a yap by ObjectId
-router.put("/update/:id", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
+router.put("/update/:id", [logged_in_check_middleware], async (req, res) => {
   try {
     const { id } = req.params;
     const { title, content } = req.body;
@@ -76,7 +76,7 @@ router.put("/update/:id", [logged_in_check_middleware, api_consumption_middlewar
 });
 
 // Delete a yap by ObjectId
-router.delete("/delete/:id", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
+router.delete("/delete/:id", [logged_in_check_middleware], async (req, res) => {
   try {
     const { id } = req.params;
     await yapService.deleteYap(id);
