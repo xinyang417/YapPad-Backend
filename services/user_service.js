@@ -1,3 +1,6 @@
+/// DISCLOSURE: the following JavaScript code has been created with the aid of 
+// Chat GPT 3.5 and edited by Group 6. 
+
 require("dotenv").config(); // Using this for the jwtSecret
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");

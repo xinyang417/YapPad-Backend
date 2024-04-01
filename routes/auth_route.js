@@ -1,3 +1,6 @@
+/// DISCLOSURE: the following JavaScript code has been created with the aid of 
+// Chat GPT 3.5 and edited by Group 6. 
+
 const express = require("express");
 const router = express.Router();
 const userService = require("../services/user_service");

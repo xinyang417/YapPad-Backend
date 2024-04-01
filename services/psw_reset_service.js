@@ -1,3 +1,6 @@
+/// DISCLOSURE: the following JavaScript code has been created with the aid of 
+// Chat GPT 3.5 and edited by Group 6. 
+
 const User = require("../models/user_model");
 const { sendEmail } = require("./email_service");
 const { hashPassword } = require("./user_service");
