@@ -6,6 +6,9 @@ const admin_router = require("./routes/admin_route.js");
 const DbService = require("./services/db_service.js");
 const session = require("express-session");
 
+const dotenv = require('dotenv')
+dotenv.config()
+
 const app = express();
 const PORT = 8000;
 
@@ -13,7 +16,7 @@ const PORT = 8000;
 // Additional CORS configuration if needed
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from this origin only
+    origin: process.env.FRONTEND_URL, // Allow requests from this origin only
     credentials: true
   })
 );
