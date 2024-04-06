@@ -25,6 +25,19 @@ router.get('/api-consumption', [logged_in_check_middleware], async (req, res) =>
   }
 });
 
+router.post("/yap", [api_consumption_middleware], async (req, res) => {
+  try {
+    const text = req.body.data.text
+    const ret = await fetch(`https://2ffb-70-71-130-6.ngrok-free.app/gen/${encodeURIComponent(text)}`)
+    const retJson = await ret.json()
+
+    res.json(retJson)
+  } catch (error) {
+    console.error('Failed to fetch API consumption:', error);
+    res.status(500).json({ message: 'Internal server error occurred.' });
+  }
+})
+
 
 // Create a new Yap
 router.post("/create", [logged_in_check_middleware, api_consumption_middleware], async (req, res) => {
