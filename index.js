@@ -33,9 +33,13 @@ app.use(
     // cookie: { secure: true }
   })
 );
-app.use("/auth", auth_router);
-app.use("/yaps", yap_router);
-app.use("/admin", admin_router);
+
+const v1 = express.Router()
+v1.use("/auth", auth_router);
+v1.use("/yaps", yap_router);
+v1.use("/admin", admin_router);
+
+app.use("/v1", v1)
 
 app.get("/", (req, res) => {
   return res.send("Hello World!");
