@@ -7,6 +7,9 @@ const yapService = require("../services/yap_service");
 const logged_in_check_middleware = require("../middleware/logged_in_check");
 const api_consumption_middleware = require("../middleware/api_consumption_middleware");
 const { getApiConsumption } = require("../services/api_consumption_service"); 
+const incrementEndpointUsage = require("../middleware/api_usage_middleware");
+
+router.use(incrementEndpointUsage);
 
 // fetch the current API consumption
 router.get('/api-consumption', [logged_in_check_middleware], async (req, res) => {
