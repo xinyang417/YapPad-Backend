@@ -16,7 +16,7 @@ router.get("/authenticate", loggedInMiddleware, async (req, res) => {
   const user = await User.findById(req.session.user_id);
   user.password = undefined
   return res.json(user)
-})
+});
 
 // registration endpoint
 router.post("/register", async (req, res) => {
