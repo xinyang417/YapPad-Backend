@@ -9,8 +9,14 @@ const loggedInMiddleware = require("../middleware/logged_in_check");
 const apiConsumptionService = require("../services/api_consumption_service");
 const incrementEndpointUsage = require("../middleware/api_usage_middleware");
 
-
+const User = require("../models/user_model.js");
 router.use(incrementEndpointUsage); // GLOBALLY i am too lazy to add it to every route individually 
+
+router.get("/authenticate", loggedInMiddleware, async (req, res) => {
+  const user = await User.findById(req.session.user_id);
+  user.password = undefined
+  return res.json(user)
+})
 
 // registration endpoint
 router.post("/register", async (req, res) => {
