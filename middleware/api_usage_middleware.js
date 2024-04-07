@@ -6,12 +6,20 @@ async function incrementEndpointUsage(req, _, next) {
 
   console.log(`Original endpoint: ${endpoint}`); 
 
+  // normalize delete endpoint for yap deletion
   if (req.method === 'DELETE' && endpoint.startsWith('/v1/yaps/delete/')) {
     // normalize the endpoint for all delete operations to be tracked under a single record
     // or else u get a new inserted record for every unique yap deleted!!!
     endpoint = '/v1/yaps/delete'; // reassignment now affects endpoint variable 
     console.log(`Normalized endpoint for DELETE: ${endpoint}`);
 }
+
+
+ // normalize put endpoint for all yap updates
+ if (req.method === 'PUT' && endpoint.startsWith('/v1/yaps/update/')) {
+    endpoint = '/v1/yaps/update'; 
+  }
+
 
   try {
     const usage = await ApiUsage.findOneAndUpdate(
