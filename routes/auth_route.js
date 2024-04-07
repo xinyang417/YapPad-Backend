@@ -7,6 +7,10 @@ const userService = require("../services/user_service");
 const pswResetService = require("../services/psw_reset_service");
 const loggedInMiddleware = require("../middleware/logged_in_check");
 const apiConsumptionService = require("../services/api_consumption_service");
+const incrementEndpointUsage = require("../middleware/api_usage_middleware");
+
+
+router.use(incrementEndpointUsage); // GLOBALLY i am too lazy to add it to every route individually 
 
 // registration endpoint
 router.post("/register", async (req, res) => {
