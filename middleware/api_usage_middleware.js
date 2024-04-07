@@ -1,8 +1,15 @@
 const ApiUsage = require("../models/api_usage_model");
 
+// router.use((req, res, next) => {
+//     console.log("Session user_id:", req.session.user_id);
+//     next();
+// });
+
+
 async function incrementEndpointUsage(req, _, next) {
   const method = req.method;
-  let endpoint = req.originalUrl;
+//   let endpoint = req.originalUrl;
+let endpoint = req.originalUrl.split('?')[0];
   console.log(`Original endpoint: ${endpoint}`); 
 
 // normalize endpoint for PUT and DELETE requests
@@ -15,9 +22,19 @@ async function incrementEndpointUsage(req, _, next) {
     console.log(`Normalized endpoint: ${endpoint}`);
   }
 
+
+  const userId = req.user?._id || req.session?.user_id || req.userId;
+  console.log(userId);
+  if (!userId) {
+      console.error("No user ID found in request");
+      return next(); 
+  }
+
+
+
   try {
     const usage = await ApiUsage.findOneAndUpdate(
-      { method, endpoint },
+      { userId, method, endpoint },
       { $inc: { count: 1 } },
       { new: true, upsert: true }
     );
