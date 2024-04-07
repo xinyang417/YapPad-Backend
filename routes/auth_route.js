@@ -7,6 +7,13 @@ const userService = require("../services/user_service");
 const pswResetService = require("../services/psw_reset_service");
 const loggedInMiddleware = require("../middleware/logged_in_check");
 const apiConsumptionService = require("../services/api_consumption_service");
+const User = require("../models/user_model.js");
+
+router.get("/authenticate", loggedInMiddleware, async (req, res) => {
+  const user = await User.findById(req.session.user_id);
+  user.password = undefined
+  return res.json(user)
+})
 
 // registration endpoint
 router.post("/register", async (req, res) => {
