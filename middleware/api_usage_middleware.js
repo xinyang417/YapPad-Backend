@@ -1,8 +1,17 @@
 const ApiUsage = require("../models/api_usage_model");
 
 async function incrementEndpointUsage(req, _, next) {
-  const method = req.method;
-  const endpoint = req.originalUrl; 
+  let method = req.method;
+  let endpoint = req.originalUrl; 
+
+  console.log(`Original endpoint: ${endpoint}`); 
+
+  if (req.method === 'DELETE' && endpoint.startsWith('/v1/yaps/delete/')) {
+    // normalize the endpoint for all delete operations to be tracked under a single record
+    // or else u get a new inserted record for every unique yap deleted!!!
+    endpoint = '/v1/yaps/delete'; // reassignment now affects endpoint variable 
+    console.log(`Normalized endpoint for DELETE: ${endpoint}`);
+}
 
   try {
     const usage = await ApiUsage.findOneAndUpdate(
