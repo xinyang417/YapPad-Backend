@@ -5,9 +5,20 @@ const yap_router = require("./routes/yap_route.js");
 const admin_router = require("./routes/admin_route.js");
 const DbService = require("./services/db_service.js");
 const session = require("express-session");
+var MongoDBStore = require('connect-mongodb-session')(session);
 
-// const dotenv = require('dotenv')
-// dotenv.config()
+const dotenv = require('dotenv')
+dotenv.config()
+
+var store = new MongoDBStore({
+  uri: process.env.MONGO_URL,
+  collection: 'mySessions'
+});
+
+// Catch errors
+store.on('error', function(error) {
+  console.log(error);
+});
 
 const app = express();
 const PORT = 8000;
@@ -28,6 +39,10 @@ app.use(express.json());
 app.use(
   session({
     secret: "keyboardcat",
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+    },
+    store: store,
     resave: "false",
     saveUninitialized: false,
     // cookie: { secure: true }
